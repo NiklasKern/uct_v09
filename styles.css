@@ -956,7 +956,7 @@ to {
   top: calc(var(--status-h) + var(--header-h));
   left: 0;
   right: 0;
-  bottom: calc(var(--bottom-h) + 80px);
+  bottom: var(--bottom-h);
   background: white;
   z-index: 200;
   display: flex;
@@ -985,7 +985,5 @@ to {
 
 .groups-footer {
   background: white;
-  z-index: 420;
-  position: relative;
 }
 /****** groups screen overlay (below .header) *****/
