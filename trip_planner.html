@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <!-- Copyright and Disclaimer. 
+	  Prototype for educational purposes only. Mostly done with the help of AI. Some of the comments may be misleading. Code not optimized or cleaned. (c)2025 K.Weidmann -->
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Trip Planner
+  </title>
+  <link href="styles.css" rel="stylesheet"/>
+  <style>
+   /* group dropdown styles */
+   .group-wrapper { position: relative; display: inline-block; }
+   .group-button { cursor: pointer; }
+   .group-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    min-width: 200px;
+    z-index: 999;
+    display: none;
+   }
+   .group-dropdown.open { display: block; }
+   .group-dropdown li {
+    list-style: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+   }
+   .group-dropdown li:hover { background: #f2f2f2; }
+   .group-dropdown .group-title { font-weight: 600; padding: 8px 14px; border-bottom: 1px solid #eee; }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <!-- Status Bar -->
+   <div class="status-bar">
+  <div class="status-left">
+   <span>
+    15:34
+   </span>
+   <img alt="GPS on" src="img/gpsOn.png"/>
+  </div>
+  <div class="status-right">
+   <span>
+    &bull;&bull;&bull;
+   </span>
+   <span>
+    LTE
+   </span>
+   <img alt="Battery" src="img/battery.png"/>
+  </div>
+   </div>
+   <!-- Header -->
+   <div class="header">
+  <span class="back-arrow">
+   &lsaquo; Trip planner
+  </span>
+  <span class="header-title">
+   Results
+  </span>
+  <span class="refresh-btn">
+   &orarr;
+  </span>
+   </div>
+   <!-- ===== Location Selection Overlay ===== -->
+   <div class="location-overlay" id="locationOverlay">
+  <div class="overlay-dim" id="locOverlayDim">
+  </div>
+  <div class="location-sheet">
+   <div class="location-header">
+    <input class="location-search" id="locationSearch" placeholder="Search for stop or address" type="text"/>
+    <button class="cancel-btn" id="cancelLocationOverlay">
+     Cancel
+    </button>
+   </div>
+   <div class="location-section">
+    <div class="section-title">
+     Current location
+    </div>
+    <div class="location-item" data-name="Current location">
+     <img alt="Current" src="img/haf_map_currpos.svg"/>
+     <span>
+    Use my location
+     </span>
+    </div>
+   </div>
+   <div class="location-section">
+    <div class="section-title">
+     Stops nearby
+    </div>
+    <div class="location-item" data-name="Dornbirn Bahnhof">
+     <img alt="Train" src="img/haf_prod_ic.svg"/>
+     <span>
+    Dornbirn Bahnhof
+     </span>
+     <span class="distance">
+    1,3 km
+    <img alt="Compass NNO" src="img/NNO.png"/>
+     </span>
+     <span class="star active">
+    &starf;
+     </span>
+    </div>
+    <div class="location-item" data-name="Dornbirn S&auml;gerbr&uuml;cke/Campus V">
+     <img alt="Bus" src="img/haf_prod_regbus.svg"/>
+     <span>
+    Dornbirn S&auml;gerbr&uuml;cke/Campus V
+     </span>
+     <span class="distance">
+    12 m
+    <img alt="Compass WNW" src="img/WNW.png"/>
+     </span>
+     <span class="star active">
+    &starf;
+     </span>
+    </div>
+    <div class="location-item" data-name="G&ouml;tzis Bahnhof">
+     <img alt="Train" src="img/haf_prod_ic.svg"/>
+     <span>
+    G&ouml;tzis Bahnhof
+     </span>
+     <span class="distance">
+    12 km
+    <img alt="Compass NNW" src="img/NNW.png"/>
+     </span>
+     <span class="star active">
+    &starf;
+     </span>
+    </div>
+   </div>
+  </div>
+   </div>
+   <!-- SCROLLABLE CONTENT -->
+   <div class="content" id="mainContent">
+  <!-- Route Input Section -->
+  <div class="route-inputs">
+   <div class="route-point">
+    <div class="route-marker start">
+     A
+    </div>
+    <div class="route-field">
+     <div class="route-label">
+    Start
+     </div>
+     <input class="route-input" id="startField" readonly="" type="text" value="Dornbirn S&auml;gerbr&uuml;cke/Campus V"/>
+    </div>
+    <span class="currentlocation">
+     <img alt="Actual Position" src="img/haf_map_currpos.svg"/>
+    </span>
+   </div>
+   <div class="route-point">
+    <div class="route-marker destination">
+     B
+    </div>
+    <div class="route-field">
+     <div class="route-label">
+    Destination
+     </div>
+     <input class="route-input" id="destinationField" readonly="" type="text" value="St. Gallenkirch Allmein"/>
+    </div>
+    <span class="swap-icon">
+     <img alt="Actual Position" src="img/haf_oppdir.svg"/>
+    </span>
+   </div>
+  </div>
+  <!-- Route Options -->
+  <div class="route-options">
+   <div class="departure-info">
+    Dep now ⌄
+   </div>
+   <div class="route-via">
+    VIA
+   </div>
+   <div class="route-marker">
+    <img src="img/selector2.png"/>
+   </div>
+  </div>
+  <div class="route-options-details">
+   <div class="options-btn">
+    <span>
+     <b>
+    OPTIONS:
+     </b>
+     Schiebestrecken vermeiden
+    </span>
+    <span>
+     &rsaquo;
+    </span>
+   </div>
+  </div>
+  <!-- Departure overlay ******NEW********-->
+  <!-- ===== iOS-style Picker Overlay ===== -->
+  <div class="departure-overlay" id="departureOverlay">
+   <!-- background dim -->
+   <div class="overlay-dim" id="overlayDim">
+   </div>
+   <div class="overlay-sheet">
+    <div class="overlay-header">
+     <span class="cancel-btn" id="cancelOverlay">
+    Cancel
+     </span>
+     <div class="overlay-toggle">
+    <button class="toggle-btn active" id="btnDeparture">
+     Departure
+    </button>
+    <button class="toggle-btn" id="btnArrive">
+     Arrive by
+    </button>
+     </div>
+     <span class="done-btn" id="doneOverlay">
+    Done
+     </span>
+    </div>
+    <div class="picker-container">
+     <div class="picker-column" id="dateColumn">
+     </div>
+     <div class="picker-column" id="hourColumn">
+     </div>
+     <div class="picker-column" id="minuteColumn">
+     </div>
+     <div class="picker-highlight">
+     </div>
+    </div>
+    <div class="overlay-actions">
+     <button class="quick-btn">
+    Now
+     </button>
+     <button class="quick-btn">
+    In 15 min
+     </button>
+     <button class="quick-btn">
+    In 1 h
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Departure overlay ******NEW END********-->
+  <!-- Transport Tabs -->
+  <div class="transport-tabs">
+   <button class="transport-tab active">
+    <div class="transport-icon">
+     <img alt="Public Transport Planning" src="img/haf_cl_pt_only_inv.svg"/>
+    </div>
+    <div>
+     1:45h
+    </div>
+   </button>
+   <button class="transport-tab">
+    <div class="transport-icon">
+     <img alt="Walk Planning" src="img/haf_cl_foot_only_normal.svg"/>
+    </div>
+   </button>
+   <button class="transport-tab">
+    <div class="transport-icon">
+     <img alt="Bike Planning" src="img/haf_cl_bike_only_normal.svg"/>
+    </div>
+   </button>
+   <button class="transport-tab">
+    <div class="transport-icon">
+     <img alt="Bike and Ride" src="img/haf_cl_pt_mix_bike_normal.svg"/>
+    </div>
+   </button>
+   <button class="transport-tab">
+    <div class="transport-icon">
+     <img alt="More Options" src="img/haf_cluster_weitere.svg"/>
+    </div>
+    <div>
+     more
+    </div>
+   </button>
+  </div>
+  <!-- Section Header -->
+  <div class="section-header">
+   Public transport
+  </div>
+  <div class="section-details">
+   Departure: Today Tue., 02.09.2025
+  </div>
+  <!-- Trip Options -->
+  <div class="trip-option">
+   <div class="trip-times">
+    <div>
+     <div class="trip-time">
+    15:40
+     </div>
+     <div class="departure-time">
+    <span class="intime">
+     15:40
+    </span>
+     </div>
+    </div>
+    <div>
+     <div class="trip-time">
+    17:25
+     </div>
+    </div>
+   </div>
+   <div class="route-line">
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     203
+    </span>
+     </div>
+    </div>
+    <img alt="Train" src="img/haf_prod_ic.svg"/>
+    <div class="route-segment train">
+     <div class="route-numbers_line">
+    <span class="route-number train">
+     REX1
+    </span>
+     </div>
+    </div>
+    <img alt="Train" src="img/haf_prod_ic.svg"/>
+    <div class="route-segment train">
+     <div class="route-numbers_line">
+    <span class="route-number train">
+     RJX 169
+    </span>
+     </div>
+    </div>
+    <div class="route-segment walk">
+    </div>
+    <img alt="Regional Train" src="img/haf_prod_comm_t.svg"/>
+    <div class="route-segment s-bahn">
+     <div class="route-numbers_line">
+    <span class="route-number s-bahn">
+     S4
+    </span>
+     </div>
+    </div>
+    <div class="route-segment walk" style="width: 35px;">
+    </div>
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     650
+    </span>
+     </div>
+    </div>
+   </div>
+   <div class="trip-details">
+    <div class="detail-item">
+     <img alt="Duration" src="img/haf_ic_duration.svg"/>
+     1:45h
+    </div>
+    <div class="detail-item">
+     <img alt="Changes" src="img/haf_ic_changes.svg"/>
+     4x
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_ic_price.svg"/>
+     14,60 &euro;
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_attr_co2_alert.svg"/>
+     1,43 kg CO₂
+    </div>
+   <div class="group-wrapper">
+    <button class="group-button" id="groupBtn" aria-haspopup="true" aria-expanded="false" type="button">
+     <div class="detail-item">
+      <img alt="Groups" src="img/user-group-svgrepo-com.svg"/>
+     </div>
+     <div id="groupLabel">No Group</div>
+    </button>
+    <ul class="group-dropdown" id="groupDropdown" role="menu" aria-label="Saved groups">
+     <li class="group-title">Groups</li>
+     <li class="group-clear" data-action="clear" role="menuitem">Clear group</li>
+     <li id="addGroupLi" role="menuitem">Add Group</li>
+     <!-- items will be populated by JS -->
+    </ul>
+   </div>
+  </div>
+  <div class="warning">
+   <span class="warning-icon">
+     <img alt="Warning" src="img/haf_ic_rt_warn.svg"/>
+    </span>
+    <span>
+     1 message available
+    </span>
+   </div>
+  </div>
+  <div class="trip-option">
+   <div class="trip-times">
+    <div>
+     <div class="trip-time">
+    16:10
+     </div>
+     <div class="departure-time">
+    <span class="intime">
+     16:10
+    </span>
+     </div>
+    </div>
+    <div>
+     <div class="trip-time">
+    17:55
+     </div>
+    </div>
+   </div>
+   <div class="route-line">
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     203
+    </span>
+     </div>
+    </div>
+    <img alt="Train" src="img/haf_prod_ic.svg"/>
+    <div class="route-segment train" style="width: 200px;">
+     <div class="route-numbers_line">
+    <span class="route-number train">
+     REX1
+    </span>
+     </div>
+    </div>
+    <div class="route-segment walk" style="width: 40px;">
+    </div>
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     650
+    </span>
+     </div>
+    </div>
+   </div>
+   <div class="trip-details">
+    <div class="detail-item">
+     <img alt="Duration" src="img/haf_ic_duration.svg"/>
+     1:45h
+    </div>
+    <div class="detail-item">
+     <img alt="Changes" src="img/haf_ic_changes.svg"/>
+     4x
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_ic_price.svg"/>
+     14,60 &euro;
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_attr_co2_alert.svg"/>
+     1,43 kg CO₂
+    </div>
+   </div>
+   <div class="warning">
+    <span class="warning-icon">
+     <img alt="Warning" src="img/haf_ic_rt_warn.svg"/>
+    </span>
+    <span>
+     1 message available
+    </span>
+   </div>
+  </div>
+  <div class="trip-option">
+   <div class="trip-times">
+    <div>
+     <div class="trip-time">
+    16:40
+     </div>
+     <div class="departure-time">
+    <span class="delayed">
+     16:43
+    </span>
+     </div>
+    </div>
+    <div>
+     <div class="trip-time">
+    18:25
+     </div>
+    </div>
+   </div>
+   <div class="route-line">
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     203
+    </span>
+     </div>
+    </div>
+    <img alt="Train" src="img/haf_prod_ic.svg"/>
+    <div class="route-segment train" style="width: 200px;">
+     <div class="route-numbers_line">
+    <span class="route-number train">
+     RJX 663
+    </span>
+     </div>
+    </div>
+    <div class="route-segment walk">
+    </div>
+    <img alt="Regional Train" src="img/haf_prod_comm_t.svg"/>
+    <div class="route-segment s-bahn">
+     <div class="route-numbers_line">
+    <span class="route-number s-bahn">
+     S4
+    </span>
+     </div>
+    </div>
+    <div class="route-segment walk">
+    </div>
+    <img alt="Regional Bus" src="img/haf_prod_regbus.svg"/>
+    <div class="route-segment bus">
+     <div class="route-numbers_line">
+    <span class="route-number bus">
+     650
+    </span>
+     </div>
+    </div>
+   </div>
+   <div class="trip-details">
+    <div class="detail-item">
+     <img alt="Duration" src="img/haf_ic_duration.svg"/>
+     1:45h
+    </div>
+    <div class="detail-item">
+     <img alt="Changes" src="img/haf_ic_changes.svg"/>
+     4x
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_ic_price.svg"/>
+     14,60 &euro;
+    </div>
+    <div class="detail-item">
+     <img alt="Price" src="img/haf_attr_co2_alert.svg"/>
+     1,43 kg CO₂
+    </div>
+   </div>
+   <div class="warning">
+    <span class="warning-icon">
+     <img alt="Warning" src="img/haf_ic_rt_warn.svg"/>
+    </span>
+    <span>
+     Departure delay: current departure time
+    </span>
+   </div>
+  </div>
+   </div>
+   <!-- scrollable container -->
+   <!-- Bottom Navigation -->
+   <div class="bottom-nav">
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Home" src="img/home_dim.png"/>
+   </span>
+   <span>
+    Home
+   </span>
+  </button>
+  <button class="nav-item active" type="button">
+   <span class="transport-icon">
+    <img alt="Home" src="img/tripPlanner_sel.png"/>
+   </span>
+   <span>
+    Trip planner
+   </span>
+  </button>
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Monitor" src="img/monitor_dim.png"/>
+   </span>
+   <span>
+    Monitor
+   </span>
+  </button>
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Map" src="img/map_dim.png"/>
+   </span>
+   <span>
+    Map
+   </span>
+  </button>
+  <button class="nav-item" id="groupsNav" type="button">
+   <span class="transport-icon">
+    <img alt="Groups" src="img/user-group-svgrepo-com.svg"/>
+   </span>
+   <span>
+    Groups
+   </span>
+  </button>
+   </div>
+   <!-- Home Indicator -->
+   <div class="home-indicator">
+   </div>
+  </div>
+  <!-- Groups Screen -->
+  <div class="groups-screen" id="groupsScreen" style="display: none;">
+   <div class="groups-header">
+    <input type="text" id="groupSearch" placeholder="Search groups" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;">
+   </div>
+   <div class="groups-list" id="groupsList" style="padding: 16px; overflow-y: auto; max-height: calc(100vh - 200px);">
+    <!-- groups will be populated here -->
+   </div>
+  </div>
+  <div class="groups-footer" id="groupsFooter" style="display: none; padding: 16px; border-top: 1px solid #eee; position: fixed; bottom: calc(var(--bottom-h) + 10px); left: 0; right: 0; background: white; z-index: 420;">
+   <button id="addGroupBtn" style="width: 100%; padding: 12px; background: #FFED05; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Add Group</button>
+  </div>
+  <!-- add small inline script to populate / toggle / save selection -->
+  <script src="script.js">
+  </script>
+ </body>
+</html>
