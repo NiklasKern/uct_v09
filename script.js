@@ -46,10 +46,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function populateGroupsList(filter = '') {
       groupsList.innerHTML = '';
       const filteredGroups = groups.filter(g => g.name.toLowerCase().includes(filter.toLowerCase()));
-      filteredGroups.forEach(g => {
+      filteredGroups.forEach((g) => {
         const div = document.createElement('div');
         div.className = 'group-item';
-        div.textContent = g.name;
+        div.innerHTML = `
+          <span>${g.name}</span>
+          <button class="delete-btn" data-id="${g.id}">Delete</button>
+        `;
         div.dataset.id = g.id;
         groupsList.appendChild(div);
       });
@@ -117,6 +120,19 @@ document.addEventListener('DOMContentLoaded', function () {
         populateGroupsList(this.value);
       });
       addGroupBtn.addEventListener('click', showAddForm);
+      // Attach delete listener here
+      groupsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          const id = e.target.getAttribute('data-id');
+          const index = groups.findIndex(g => g.id === id);
+          if (index !== -1) {
+            groups.splice(index, 1);
+            localStorage.setItem('groups', JSON.stringify(groups));
+            populateGroupsList(groupSearch.value);
+            populateDropdown();
+          }
+        }
+      });
     }
 
     showGroupsList(); // Initial show
@@ -237,4 +253,22 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') setOpen(false);
   });
+});
+
+// Add event listeners to bottom navigation buttons
+document.querySelectorAll('.nav-item').forEach(button => {
+    button.addEventListener('click', function() {
+        const buttonText = this.querySelector('span:last-child').textContent.trim();
+        if (buttonText === 'Trip planner') {
+            // Navigate to the first screen of trip planner (e.g., reset to input view)
+            // Assuming the first screen is hiding results and showing initial inputs
+            document.getElementById('mainContent').style.display = 'none'; // Hide results
+            window.location.href = 'trip_planner.html';
+        } else if (buttonText === 'Groups') {
+            // Show groups screen
+            document.getElementById('groupsScreen').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+        // Add similar for other buttons if needed
+    });
 });

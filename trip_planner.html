@@ -546,6 +546,18 @@
   </div>
    </div>
    <!-- scrollable container -->
+  <!-- Groups Screen -->
+  <div class="groups-screen" id="groupsScreen" style="display: none;">
+   <div class="groups-header">
+    <input type="text" id="groupSearch" placeholder="Search groups" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;">
+   </div>
+   <div class="groups-list" id="groupsList" style="padding: 16px; overflow-y: auto; max-height: calc(100vh - 200px);">
+    <!-- groups will be populated here -->
+   </div>
+   <div class="groups-footer" style="padding: 16px; border-top: 1px solid #eee;">
+    <button id="addGroupBtn" style="width: 100%; padding: 12px; background: #FFED05; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Add Group</button>
+   </div>
+  </div>
    <!-- Bottom Navigation -->
    <div class="bottom-nav">
   <button class="nav-item" type="button">
@@ -593,18 +605,7 @@
    <div class="home-indicator">
    </div>
   </div>
-  <!-- Groups Screen -->
-  <div class="groups-screen" id="groupsScreen" style="display: none;">
-   <div class="groups-header">
-    <input type="text" id="groupSearch" placeholder="Search groups" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;">
-   </div>
-   <div class="groups-list" id="groupsList" style="padding: 16px; overflow-y: auto; max-height: calc(100vh - 200px);">
-    <!-- groups will be populated here -->
-   </div>
-   <div class="groups-footer" style="padding: 16px; border-top: 1px solid #eee;">
-    <button id="addGroupBtn" style="width: 100%; padding: 12px; background: #FFED05; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Add Group</button>
-   </div>
-  </div>
+
   <!-- add small inline script to populate / toggle / save selection -->
   <script src="script.js">
   </script>
