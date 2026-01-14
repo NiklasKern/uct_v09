@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <!-- Copyright and Disclaimer. 
+      Prototype for educational purposes only. Mostly done with the help of AI. Some of the comments may be misleading. Code not optimized or cleaned. (c)2025 K.Weidmann -->
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Groups
+  </title>
+  <link href="styles.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <!-- Status Bar -->
+   <div class="status-bar">
+  <div class="status-left">
+   <span>
+    15:34
+   </span>
+   <img alt="GPS on" src="img/gpsOn.png"/>
+  </div>
+  <div class="status-right">
+   <span>
+    &bull;&bull;&bull;
+   </span>
+   <span>
+    LTE
+   </span>
+   <img alt="Battery" src="img/battery.png"/>
+  </div>
+   </div>
+   <!-- Header -->
+   <div class="header">
+  <span class="back-arrow">
+   &lsaquo; Groups
+  </span>
+  <span class="header-title">
+   Groups
+  </span>
+  <span class="refresh-btn">
+   &orarr;
+  </span>
+   </div>
+   <!-- Groups Screen -->
+   <div class="groups-screen" id="groupsScreen" style="display: flex;">
+    <div class="groups-header">
+     <input type="text" id="groupSearch" placeholder="Search groups" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;">
+    </div>
+    <div class="groups-list" id="groupsList" style="padding: 16px; overflow-y: auto; max-height: calc(100vh - 200px);">
+     <!-- groups will be populated here -->
+    </div>
+    <div class="groups-footer" id="groupsFooter" style="padding: 16px; border-top: 1px solid #eee;">
+     <button id="addGroupBtn" style="width: 100%; padding: 12px; background: #FFED05; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Add Group</button>
+    </div>
+   </div>
+   <!-- Bottom Navigation -->
+   <div class="bottom-nav">
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Home" src="img/home_dim.png"/>
+   </span>
+   <span>
+    Home
+   </span>
+  </button>
+  <button class="nav-item" id="tripPlannerNav" type="button">
+   <span class="transport-icon">
+    <img alt="Home" src="img/tripPlanner_sel.png"/>
+   </span>
+   <span>
+    Trip planner
+   </span>
+  </button>
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Monitor" src="img/monitor_dim.png"/>
+   </span>
+   <span>
+    Monitor
+   </span>
+  </button>
+  <button class="nav-item" type="button">
+   <span class="transport-icon">
+    <img alt="Map" src="img/map_dim.png"/>
+   </span>
+   <span>
+    Map
+   </span>
+  </button>
+  <button class="nav-item active" id="groupsNav" type="button">
+   <span class="transport-icon">
+    <img alt="Groups" src="img/user-group-svgrepo-com.svg"/>
+   </span>
+   <span>
+    Groups
+   </span>
+  </button>
+   </div>
+   <!-- Home Indicator -->
+   <div class="home-indicator">
+   </div>
+  </div>
+  <script src="script.js">
+  </script>
+ </body>
+</html>
