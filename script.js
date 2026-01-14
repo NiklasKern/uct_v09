@@ -34,8 +34,10 @@ document.querySelectorAll('.nav-item').forEach(item => {
 
 // Groups functionality (overlay in trip_planner.html)
 document.addEventListener('DOMContentLoaded', function () {
+  // Define groups once at the top, shared between screen and dropdown
+  let groups = JSON.parse(localStorage.getItem('groups')) || [];
+
   if (document.getElementById('groupsScreen')) {
-    let groups = JSON.parse(localStorage.getItem('groups')) || [];
     const groupsScreen = document.getElementById('groupsScreen');
     const groupsFooter = document.getElementById('groupsFooter');
     const groupSearch = document.getElementById('groupSearch');
@@ -156,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Groups dropdown in trip details
-  let groups = JSON.parse(localStorage.getItem('groups')) || [];
   const btn = document.getElementById('groupBtn');
   const dropdown = document.getElementById('groupDropdown');
   const label = document.getElementById('groupLabel');
